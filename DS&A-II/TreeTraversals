@@ -1,0 +1,108 @@
+import java.util.List;
+import java.util.ArrayList;
+import java.util.LinkedList;
+
+/**
+ * Your implementation of the pre-order, in-order, and post-order
+ * traversals of a tree.
+ */
+public class Traversals<T extends Comparable<? super T>> {
+
+    /**
+     * DO NOT ADD ANY GLOBAL VARIABLES!
+     */
+
+    /**
+     * Given the root of a binary search tree, generate a
+     * pre-order traversal of the tree. The original tree
+     * should not be modified in any way.
+     *
+     * This must be done recursively.
+     *
+     * Must be O(n).
+     *
+     * @param <T> Generic type.
+     * @param root The root of a BST.
+     * @return List containing the pre-order traversal of the tree.
+     */
+    public List<T> preorder(TreeNode<T> root) {
+        //create list to store values
+        List<T> valueList = new ArrayList<>();
+    
+        // if root is not null proceed C-L-R
+        // if root is null then an empty list is returned
+        if(root != null){
+            // look at data and add to list
+            valueList.add(root.getData());
+            // recurse left
+            valueList.addAll(preorder(root.getLeft()));
+            // recurse right
+            valueList.addAll(preorder(root.getRight()));
+        };
+
+        return valueList;
+    }
+
+    /**
+     * Given the root of a binary search tree, generate an
+     * in-order traversal of the tree. The original tree
+     * should not be modified in any way.
+     *
+     * This must be done recursively.
+     *
+     * Must be O(n).
+     *
+     * @param <T> Generic type.
+     * @param root The root of a BST.
+     * @return List containing the in-order traversal of the tree.
+     */
+    public List<T> inorder(TreeNode<T> root) {
+        //create list to store values
+        List<T> valueList = new ArrayList<>();
+    
+        // if root is not null proceed L-C-R
+        // if root is null then an empty list is returned
+        if(root != null){
+            // recurse left
+            valueList.addAll(inorder(root.getLeft()));
+            // look at data and add to list
+            valueList.add(root.getData());
+            // recurse right
+            valueList.addAll(inorder(root.getRight()));
+        };
+
+        return valueList;
+    }
+
+    /**
+     * Given the root of a binary search tree, generate a
+     * post-order traversal of the tree. The original tree
+     * should not be modified in any way.
+     *
+     * This must be done recursively.
+     *
+     * Must be O(n).
+     *
+     * @param <T> Generic type.
+     * @param root The root of a BST.
+     * @return List containing the post-order traversal of the tree.
+     */
+    public List<T> postorder(TreeNode<T> root) {
+        //create list to store values
+        List<T> valueList = new ArrayList<>();
+    
+        // if root is not null then proceed L-R-C 
+        // if root is null then an empty list is returned
+        if(root != null){
+            // recurse left
+            valueList.addAll(postorder(root.getLeft()));
+             // recurse right
+            valueList.addAll(postorder(root.getRight()));
+            // look at data and add to list
+            valueList.add(root.getData());
+        };
+
+        return valueList;
+        
+    }
+}

@@ -1,0 +1,209 @@
+import java.util.NoSuchElementException;
+
+/**
+ * Your implementation of a BST.
+ */
+public class BST<T extends Comparable<? super T>> {
+
+    /*
+     * Do not add new instance variables or modify existing ones.
+     */
+    private BSTNode<T> root;
+    private int size;
+
+    /*
+     * Do not add a constructor.
+     */
+
+    /**
+     * Adds the data to the tree.
+     *
+     * This must be done recursively.
+     *
+     * The new data should become a leaf in the tree.
+     *
+     * Traverse the tree to find the appropriate location. If the data is
+     * already in the tree, then nothing should be done (the duplicate
+     * shouldn't get added, and size should not be incremented).
+     *
+     * Should be O(log n) for best and average cases and O(n) for worst case.
+     *
+     * @param data The data to add to the tree.
+     * @throws java.lang.IllegalArgumentException If data is null.
+     */
+    public void add(T data) {
+        // check for null data being passed and throw exception
+        if (data == null){
+            throw new IllegalArgumentException("Null data being passed, data cannot be null!");
+        }
+        // if the root is null then the data should be inserted here
+        if (root == null){
+            // root is now a new node with node.data of data
+            root = new BSTNode<>(data);
+            size++;
+        }else{
+            // keep traversing using the recursive helper method
+            rAdd(data, root);
+        }
+            
+    }
+    /** 
+    Helper method for public add method above
+    
+        * @param data, the data to add
+        * @param node, the current root
+
+    Logic Flow:
+    If data passed is greater than current node.data traverse left
+    else if data pass is less than current node.data traverse right
+    */ 
+
+    private void rAdd(T data, BSTNode<T> node){
+        // comparison result in a value for easier comparison
+        int compareVal = data.compareTo(node.getData());
+        // if data < curr.data traverse left
+        if(compareVal<0){ 
+            // base case where left pointer is null
+            if(node.getLeft() == null){
+                // set left pointer to new node with data
+                node.setLeft(new BSTNode<>(data));
+                size++;
+            }else{
+                // if the pointer is not null then keep traversing tree
+                rAdd(data, node.getLeft());
+            }
+
+        }else if(compareVal>0){ //traverse right
+            // base case where right pointer is null
+            if(node.getRight() == null){
+                // set right pointer to new node with data as data
+                node.setRight(new BSTNode<>(data));
+                size++;
+            }else{
+                // if the pointer is not null keep traversing tree
+                rAdd(data, node.getRight());
+
+            }
+
+        }
+
+    }
+
+    /**
+     * Removes and returns the data from the tree matching the given parameter.
+     *
+     * This must be done recursively.
+     *
+     * There are 3 cases to consider:
+     * 1: The node containing the data is a leaf (no children). In this case,
+     * simply remove it.
+     * 2: The node containing the data has one child. In this case, simply
+     * replace it with its child.
+     * 3: The node containing the data has 2 children. Use the SUCCESSOR to
+     * replace the data. You should use recursion to find and remove the
+     * successor (you will likely need an additional helper method to
+     * handle this case efficiently).
+     *
+     * Do NOT return the same data that was passed in. Return the data that
+     * was stored in the tree.
+     *
+     * Hint: Should you use value equality or reference equality?
+     *
+     * Must be O(log n) for best and average cases and O(n) for worst case.
+     *
+     * @param data The data to remove.
+     * @return The data that was removed.
+     * @throws java.lang.IllegalArgumentException If data is null.
+     * @throws java.util.NoSuchElementException   If the data is not in the tree.
+     */
+    public T remove(T data) {
+        // passed data cannot be null
+        if(data == null){
+            throw new IllegalArgumentException("Data cannot be null!");
+        }
+        // new dummy node called removed 
+        BSTNode<T> removed = new BSTNode<>(null);
+        // recursive helper method for remove
+        root = rRemove(data, root, removed);
+        return removed.getData();
+    }
+
+    /**
+    Private helper method to aid in removing data from BST
+        * @param data, the data to add
+        * @param node, the current node
+        * @param removed, the node that will be removed
+     */
+    private BSTNode<T> rRemove(T data, BSTNode<T> node, BSTNode<T> removed){
+        // if curr == null data not found
+        if(node==null){
+            throw new NoSuchElementException("Data is not found");
+        }else{
+            // comparison result in a value for easier comparison
+            int compareVal = data.compareTo(node.getData());
+
+            if (compareVal<0){
+                node.setLeft(rRemove(data, node.getLeft(), removed));
+            }else if(compareVal>0){
+                node.setRight(rRemove(data, node.getRight(), removed));
+            }else{
+                // data found 
+                removed.setData(node.getData());
+                size--;
+
+                if(node.getRight() == null){
+                    return node.getLeft();
+                }else if(node.getLeft() == null){
+                    return node.getRight();
+                }else{
+                    BSTNode<T> child = new BSTNode<>(null);
+                    node.setRight(removeSuccessor(node.getRight(), child));
+                    node.setData(child.getData());
+                }
+            }
+        }
+        return node;
+    }
+    /**
+        helper method for removing the successor
+        finds successor node
+
+        @param node, the current node
+        @param child, the child node to be removed
+        @returns the successor node that will be removed
+     */
+    private BSTNode<T> removeSuccessor(BSTNode<T> node, BSTNode<T> child){
+        if(node.getLeft() == null){
+            child.setData(node.getData());
+            return node.getRight();
+        }
+        node.setLeft(removeSuccessor(node.getLeft(), child));
+        return node;
+    }
+
+    /**
+     * Returns the root of the tree.
+     *
+     * For grading purposes only. You shouldn't need to use this method since
+     * you have direct access to the variable.
+     *
+     * @return The root of the tree
+     */
+    public BSTNode<T> getRoot() {
+        // DO NOT MODIFY THIS METHOD!
+        return root;
+    }
+
+    /**
+     * Returns the size of the tree.
+     *
+     * For grading purposes only. You shouldn't need to use this method since
+     * you have direct access to the variable.
+     *
+     * @return The size of the tree
+     */
+    public int size() {
+        // DO NOT MODIFY THIS METHOD!
+        return size;
+    }
+}

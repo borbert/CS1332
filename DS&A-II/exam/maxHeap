@@ -1,0 +1,118 @@
+/**
+ * Your implementation of a MaxHeap.
+ */
+public class MaxHeap<T extends Comparable<? super T>> {
+
+    /*
+     * The initial capacity of the MaxHeap when created with the default
+     * constructor.
+     *
+     * DO NOT MODIFY THIS VARIABLE!
+     */
+    public static final int INITIAL_CAPACITY = 13;
+
+    /*
+     * Do not add new instance variables or modify existing ones.
+     */
+    private T[] backingArray;
+    private int size;
+
+    /**
+     * This is the constructor that constructs a new MaxHeap.
+     *
+     * Recall that Java does not allow for regular generic array creation,
+     * so instead we cast a Comparable[] to a T[] to get the generic typing.
+     */
+    public MaxHeap() {
+        //DO NOT MODIFY THIS METHOD!
+        backingArray = (T[]) new Comparable[INITIAL_CAPACITY];
+    }
+
+    /**
+     * Adds an item to the heap. If the backing array is full (except for
+     * index 0) and you're trying to add a new item, then double its capacity.
+     *
+     * Method should run in amortized O(log n) time.
+     *
+     * @param data The data to add. You may assume that data will always be valid.
+     */
+    public void add(T data) {
+        // cannot have null data
+        if (data == null) {
+            throw new IllegalArgumentException("Data can't be null");
+        }
+        if (size == backingArray.length - 1) {
+            T[] tmp = (T[]) new Comparable[backingArray.length * 2];
+            for (int i = 0; i < backingArray.length; i++) {
+                tmp[i] = backingArray[i];
+            }
+            backingArray = tmp;
+        }
+        backingArray[++size] = data;
+        int i = size;
+        while (i > 1
+                && backingArray[i / 2].compareTo(backingArray[i]) < 0) {
+            swap(data, i, i / 2);
+            i /= 2;
+        }
+    }
+
+    private void upHeap(T data, int dataIndex){
+     //
+     // calculating the left and right children if given index 'n'
+        int rightChild = 2 * dataIndex +1;
+        int leftChild = 2 * dataIndex;
+
+
+        if(backingArray[dataIndex].compareTo(backingArray[leftChild]) > 0 
+            && backingArray[dataIndex].compareTo(backingArray[rightChild]) > 0){
+             // order is correct
+            return;
+        } else {
+            // swapping
+            // left smaller than right
+            if(backingArray[rightChild].compareTo(backingArray[leftChild]) < 0){
+                swap(data, leftChild, dataIndex);
+                dataIndex = leftChild;
+            } else {
+                // right smaller than left
+                swap(data, rightChild, dataIndex);
+                dataIndex = rightChild;
+            }
+            
+        }
+        upHeap(data, dataIndex);
+    }
+
+    private void swap(T data, int index1, int index2){
+        T tempArr = backingArray[index1];
+        backingArray[index1] = data;
+        backingArray[index2] = tempArr;
+    }
+
+    /**
+     * Returns the backing array of the heap.
+     *
+     * For grading purposes only. You shouldn't need to use this method since
+     * you have direct access to the variable.
+     *
+     * @return The backing array of the list
+     */
+    public T[] getBackingArray() {
+        // DO NOT MODIFY THIS METHOD!
+        return backingArray;
+    }
+
+    /**
+     * Returns the size of the heap.
+     *
+     * For grading purposes only. You shouldn't need to use this method since
+     * you have direct access to the variable.
+     *
+     * @return The size of the list
+     */
+    public int size() {
+        // DO NOT MODIFY THIS METHOD!
+        return size;
+    }
+}

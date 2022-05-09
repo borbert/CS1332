@@ -1,0 +1,134 @@
+import java.util.Comparator;
+
+/**
+ * Your implementation of various iterative sorting algorithms.
+ */
+public class Sorting {
+
+    /**
+     * Implement bubble sort.
+     *
+     * It should be:
+     * in-place
+     * stable
+     * adaptive
+     *
+     * Have a worst case running time of: O(n^2)
+     * And a best case running time of: O(n)
+     *
+     * NOTE: You should implement bubble sort with the last swap optimization.
+     *
+     * You may assume that the passed in array and comparator
+     * are both valid and will never be null.
+     *
+     * @param <T>        Data type to sort.
+     * @param arr        The array that must be sorted after the method runs.
+     * @param comparator The Comparator used to compare the data in arr.
+     */
+    public static <T> void bubbleSort(T[] arr, Comparator<T> comparator) {
+        // cannot pass a null array
+        if(arr == null){
+            throw new IllegalArgumentException("Array to be sorted cannot be null!");
+        } else if (comparator == null) {
+            // cannot compare with a null comparator
+            throw new IllegalArgumentException("Comparator cannot be null!");
+        }
+
+        int stopIndex = arr.length -1;
+        int lastSwap = stopIndex + 1;
+
+        while(lastSwap > 0){
+            lastSwap = 0;
+
+            for(int j=1; j <= stopIndex; j++){
+                if(comparator.compare(arr[j-1], arr[j]) > 0){
+                    // swap values
+                    T temp=arr[j-1];
+                    arr[j-1]=arr[j];
+                    arr[j]=temp;
+                    lastSwap=j-1;
+                }
+            }
+            stopIndex=lastSwap;
+        }
+        }
+
+    /**
+     * Implement selection sort.
+     *
+     * It should be:
+     * in-place
+     * unstable
+     * not adaptive
+     *
+     * Have a worst case running time of: O(n^2)
+     * And a best case running time of: O(n^2)
+     *
+     * You may assume that the passed in array and comparator
+     * are both valid and will never be null.
+     *
+     * @param <T>        Data type to sort.
+     * @param arr        The array that must be sorted after the method runs.
+     * @param comparator The Comparator used to compare the data in arr.
+     */
+    public static <T> void selectionSort(T[] arr, Comparator<T> comparator) {
+        // cannot pass a null array
+        if(arr == null){
+            throw new IllegalArgumentException("Array to be sorted cannot be null!");
+        } else if (comparator == null) {
+            // cannot compare with a null comparator
+            throw new IllegalArgumentException("Comparator cannot be null!");
+        }
+        for(int i=arr.length-1; i>0; i--){
+            int max = i;
+            // find the new maximum below
+            for (int j=0; j < i ; j++){
+                if(comparator.compare(arr[j],arr[max])>0){
+                    max = j;
+                }
+            }
+            // swap values
+            T temp = arr[i];
+            arr[i] = arr[max];
+            arr[max]=temp;
+        }
+    }
+
+    /**
+     * Implement insertion sort.
+     *
+     * It should be:
+     * in-place
+     * stable
+     * adaptive
+     *
+     * Have a worst case running time of: O(n^2)
+     * And a best case running time of: O(n)
+     *
+     * You may assume that the passed in array and comparator
+     * are both valid and will never be null.
+     *
+     * @param <T>        Data type to sort.
+     * @param arr        The array that must be sorted after the method runs.
+     * @param comparator The Comparator used to compare the data in arr.
+     */
+    public static <T> void insertionSort(T[] arr, Comparator<T> comparator) {
+        // catch null array or comparator being passed
+        if(arr == null){
+            throw new IllegalArgumentException("Cannot pass a null array to be sorted!");
+        } else if (comparator == null){
+            throw new IllegalArgumentException("Cannot search for a null comparator!");
+        }
+
+        for(int i = 1;i < arr.length; i++){
+            int j = i;
+            while(j > 0 && comparator.compare(arr[j], arr[j - 1]) < 0){
+                // sawp values and decrement inner loop var
+                T temp=arr[j];
+                arr[j]=arr[j - 1];
+                arr[j - 1]=temp;
+                j--;
+            }
+        }
+    }
+}

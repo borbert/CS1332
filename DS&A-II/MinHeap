@@ -1,0 +1,228 @@
+import java.util.NoSuchElementException;
+
+/**
+ * Your implementation of a MinHeap.
+ */
+public class MinHeap<T extends Comparable<? super T>> {
+
+    /**
+     * The initial capacity of the MinHeap.
+     *
+     * DO NOT MODIFY THIS VARIABLE!
+     */
+    public static final int INITIAL_CAPACITY = 13;
+
+     /*
+     * Do not add new instance variables or modify existing ones.
+     */
+    private T[] backingArray;
+    private int size;
+
+    /**
+     * This is the constructor that constructs a new MinHeap.
+     *
+     * Recall that Java does not allow for regular generic array creation,
+     * so instead we cast a Comparable[] to a T[] to get the generic typing.
+     */
+    public MinHeap() {
+        //DO NOT MODIFY THIS METHOD!
+        backingArray = (T[]) new Comparable[INITIAL_CAPACITY];
+    }
+
+    /**
+     * Adds an item to the heap. If the backing array is full (except for
+     * index 0) and you're trying to add a new item, then double its capacity.
+     *
+     * Method should run in amortized O(log n) time.
+     *
+     * @param data The data to add.
+     * @throws java.lang.IllegalArgumentException If the data is null.
+     */
+    public void add(T data) {
+        // handle null data being passed
+        if(data == null){
+            throw new IllegalArgumentException("Data cannot be null!");
+        }
+        if(size == backingArray.length -1){
+            // need to account for index 0 being unused
+            resize();
+        }
+        
+        if(size == 0){
+            // if array is empty add to root, index 1
+            backingArray[1] = data;
+
+            size++;
+        } else {
+            // add to the next available space in array, add to back of array
+            // ensuring shape property
+            backingArray[size + 1] = data;
+
+            // helper function to upHeap the data
+            upHeap(data, size + 1);
+
+            size++;
+        }
+    }
+
+    /**
+     * private helper method for resizing backing array
+     */
+    private void resize(){
+        T[] tempArr = (T[]) (new Comparable[backingArray.length * 2]);
+        for(int i = 0; i < backingArray.length; i++){
+            tempArr[i] = backingArray[i];
+        }
+        backingArray = tempArr;
+    }
+
+    /**
+     * Private helper method for up heap operations
+     * 
+     * @param data is the data in question
+     * @param dataIndex is the index of said data
+     */
+    private void upHeap(T data, int dataIndex){
+        // parent index of n = n / 2
+        int parentIndex = dataIndex / 2;
+        // base case -- top of heap
+        if(parentIndex == 0){
+            return;
+        }
+        // parent is less than data
+        if (backingArray[parentIndex].compareTo(data) < 0){
+            return;
+        } else if (backingArray[parentIndex].compareTo(data) > 0) {
+            // data is less than parent swap and repeat process
+            swap(data, parentIndex, dataIndex);
+            upHeap(data, dataIndex / 2);
+        }
+
+    }
+
+    /**
+     * private method for swapping data in the array
+     * 
+     * @param data is the data at current node
+     * @param index1 is the index of the data being compared
+     * @param index2 is the index of the next element to swap with
+     */
+    private void swap(T data, int index1, int index2){
+        T tempArr = backingArray[index1];
+        backingArray[index1] = data;
+        backingArray[index2] = tempArr;
+    }
+
+    /**
+     * Removes and returns the min item of the heap. As usual for array-backed
+     * structures, be sure to null out spots as you remove. Do not decrease the
+     * capacity of the backing array.
+     *
+     * Method should run in O(log n) time.
+     *
+     * @return The data that was removed.
+     * @throws java.util.NoSuchElementException If the heap is empty.
+     */
+    public T remove() {
+        // deal with an empty array
+        if(size == 0){
+            throw new NoSuchElementException("Backing array is empty, cannot remove value!");
+        }
+        // save root data to be returned later
+        T removed = backingArray[1];
+        
+        // copy last element to the root
+        backingArray[1] = backingArray[size];
+        
+        downHeap(backingArray[1], 1);
+
+        //remove the last item and decrement size
+        backingArray[size] = null;
+        size--;
+
+        return removed;
+    }
+
+    /**
+     * private helper method for down heap operations
+     * 
+     * @param data is the data in being compared
+     * @param dataIndex is the index of the data in question
+     */
+    private void downHeap(T data, int dataIndex){
+        // calculating the left and right children if given index 'n'
+        int rightChild = 2 * dataIndex +1;
+        int leftChild = 2 * dataIndex;
+
+        // base case -- end of heap
+        // also need to check the left and right index for out of bounds exceptions
+        if(dataIndex == size || 
+            leftChild >= backingArray.length || 
+            rightChild >= backingArray.length){
+            return;
+        }
+        // base case -- bottom row
+        if(backingArray[leftChild] == null && backingArray[rightChild] == null){
+            return;
+        }
+
+        // parent with only one child
+        if(backingArray[rightChild] == null){
+            // compare data in left child to current data
+            if(backingArray[dataIndex].compareTo(backingArray[leftChild]) > 0){
+                swap(data, dataIndex, leftChild);
+            }
+            return;
+        } else if(backingArray[leftChild] == null){
+            // compare data in right child to current data
+            if(backingArray[dataIndex].compareTo(backingArray[rightChild]) > 0){
+                swap(data, dataIndex, rightChild);
+            }
+            return;
+        }
+
+        if(backingArray[dataIndex].compareTo(backingArray[leftChild]) < 0 
+            && backingArray[dataIndex].compareTo(backingArray[rightChild]) < 0){
+             // order is correct
+            return;
+        } else {
+            // swapping
+            // left smaller than right
+            if(backingArray[rightChild].compareTo(backingArray[leftChild]) > 0){
+                swap(data, leftChild, dataIndex);
+                dataIndex = leftChild;
+            } else {
+                // right smaller than left
+                swap(data, rightChild, dataIndex);
+                dataIndex = rightChild;
+            }
+            
+        }
+        downHeap(data, dataIndex);
+    }
+    /**
+     * Returns the backing array of the heap.
+     *
+     * For grading purposes only. You shouldn't need to use this method since
+     * you have direct access to the variable.
+     *
+     * @return The backing array of the list
+     */
+    public T[] getBackingArray() {
+        // DO NOT MODIFY THIS METHOD!
+        return backingArray;
+    }
+
+    /**
+     * Returns the size of the heap.
+     *
+     * For grading purposes only. You shouldn't need to use this method since
+     * you have direct access to the variable.
+     *
+     * @return The size of the list
+     */
+    public int size() {
+        // DO NOT MODIFY THIS METHOD!
+        return size;
+    }
+}
